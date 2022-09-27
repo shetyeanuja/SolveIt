@@ -56,7 +56,8 @@ public class MainActivity extends AppCompatActivity {
                 finish();
                 Intent intent1 = new Intent(MainActivity.this,IconPage.class);
                 startActivity(intent1);
-            } catch (ApiException e) {
+            }
+            catch (ApiException e) {
                 e.printStackTrace();
                 Toast.makeText(MainActivity.this,"Some error occurred while signing!",Toast.LENGTH_SHORT).show();
             }

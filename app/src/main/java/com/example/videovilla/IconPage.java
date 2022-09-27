@@ -2,6 +2,7 @@ package com.example.videovilla;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,7 +33,8 @@ public class IconPage extends AppCompatActivity {
     TextToSpeech tts;
 
     int qtn=1, results=0;
-    String ans,response;
+    int ans,response;
+    String ans1,response1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,14 +76,33 @@ public class IconPage extends AppCompatActivity {
 
                 start.setText("NEXT");
 
+                // Generate random operation
                 Random rand = new Random();
                 String number1 = String.valueOf(rand.nextInt(10) + 1);
                 num1.setText(number1);
                 String number2 = String.valueOf(rand.nextInt(10) + 1);
                 num2.setText(number2);
-                operand.setText("*");
+                String[] operands = new String[]{"+","-","*"};
+                String op = operands[rand.nextInt(operands.length)];
+                operand.setText(op);
 
-                String text = num1.getText().toString() + "multiplied by" + num2.getText().toString();
+                // question from text to speech
+                String say="";
+                int ans = 0;
+                if(op.equals("+")){
+                   say = "Plus";
+                    ans = Integer.parseInt(number1) + Integer.parseInt(number2);
+                }
+                else if(op.equals("-")){
+                    say = "Minus";
+                    ans = Integer.parseInt(number1) - Integer.parseInt(number2);
+                }
+                else if(op.equals("*")){
+                    say = "Into";
+                    ans = Integer.parseInt(number1) * Integer.parseInt(number2);
+                }
+                ans1 = String.valueOf(ans);
+                String text = number1+say+number2;
                 tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
                     @Override
                     public void onInit(int i) {
@@ -93,18 +114,18 @@ public class IconPage extends AppCompatActivity {
                     }
                 });
 
-                ans = String.valueOf(Integer.valueOf(num1.getText().toString()) * Integer.valueOf(num2.getText().toString()));
-
+                // user's speech into text
                 Runnable r = new Runnable() {
+                    @SuppressLint("QueryPermissionsNeeded")
                     @Override
                     public void run() {
-                        // speech to text
                         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
                         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
                         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
                         if (intent.resolveActivity(getPackageManager()) != null) {
                             startActivityForResult(intent, 2000);
-                        } else {
+                        }
+                        else {
                             Toast.makeText(IconPage.this, "Device is not supporting speech!", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -112,11 +133,9 @@ public class IconPage extends AppCompatActivity {
 
                 Handler h = new Handler();
                 h.postDelayed(r, 1500);
-
-
         }
 
-    // after getting result from intent
+    // after getting result from speech to text intent
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -126,11 +145,10 @@ public class IconPage extends AppCompatActivity {
                 if(resultCode==RESULT_OK && data!=null){
                     // get the speech into text as an arraylist and set it in text_from_speech
                     ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    response = String.valueOf(result.get(0));
+                    response1 = String.valueOf(result.get(0));
 
                     String command;
-
-                    if(ans.equals(response)){
+                    if(ans1.equals(response1)){
                         command = "Correct";
                         results++;
                     }
@@ -138,6 +156,7 @@ public class IconPage extends AppCompatActivity {
                         command = "Incorrect";
                     }
 
+                    // Say if ans is correct or incorrect
                     tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
                         @Override
                         public void onInit(int i) {
@@ -149,17 +168,14 @@ public class IconPage extends AppCompatActivity {
                                 qtn++;
 
                                 if (qtn==11) {
-                                    Toast.makeText(IconPage.this, "Your Score is "+String.valueOf(results), Toast.LENGTH_LONG).show();
+                                    Toast.makeText(IconPage.this, "Your Score is "+String.valueOf(results)+ " out of 10", Toast.LENGTH_LONG).show();
                                     finish();
                                     Intent intent = new Intent(IconPage.this,IconPage.class);
                                     startActivity(intent);
-
                                 }
-
                             }
                         }
                     });
-
                 }
                 break;
         }
