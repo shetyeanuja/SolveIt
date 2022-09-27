@@ -168,7 +168,18 @@ public class IconPage extends AppCompatActivity {
                                 qtn++;
 
                                 if (qtn==11) {
-                                    Toast.makeText(IconPage.this, "Your Score is "+String.valueOf(results)+ " out of 10", Toast.LENGTH_LONG).show();
+                                    String r = "Your Score is "+String.valueOf(results)+ " out of 10";
+                                    Toast.makeText(IconPage.this,r, Toast.LENGTH_LONG).show();
+                                    tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                                        @Override
+                                        public void onInit(int i) {
+                                            if (i == TextToSpeech.SUCCESS) {
+                                                tts.setLanguage(Locale.getDefault());
+                                                tts.setSpeechRate(1.0f);
+                                                tts.speak(r, TextToSpeech.QUEUE_ADD, null);
+                                            }
+                                        }
+                                    });
                                     finish();
                                     Intent intent = new Intent(IconPage.this,IconPage.class);
                                     startActivity(intent);
