@@ -46,7 +46,7 @@
         android:layout_marginBottom="18dp"
         android:onClick="askQuestions"
         android:text="start"
-        app:backgroundTint="#266028"
+        app:backgroundTint="#6749B1"
         app:layout_constraintBottom_toTopOf="@+id/num1"
         app:layout_constraintEnd_toEndOf="@+id/num1"
         app:layout_constraintStart_toStartOf="@+id/num1"

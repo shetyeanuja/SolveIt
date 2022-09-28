@@ -74,7 +74,7 @@ public class IconPage extends AppCompatActivity {
 
         public void askQuestions(View view){
 
-                start.setText("NEXT");
+                start.setText("Speak the answer!");
 
                 // Generate random operation
                 Random rand = new Random();
@@ -165,6 +165,20 @@ public class IconPage extends AppCompatActivity {
                                 tts.setSpeechRate(1.0f);
                                 tts.speak(command,TextToSpeech.QUEUE_ADD,null);
 
+                                //next question
+                                Runnable q = new Runnable() {
+                                    @SuppressLint("QueryPermissionsNeeded")
+                                    @Override
+                                    public void run() {
+                                        if(qtn!=11) {
+                                            start.performClick();
+                                        }
+                                    }
+                                };
+
+                                Handler h = new Handler();
+                                h.postDelayed(q, 1000);
+
                                 qtn++;
 
                                 if (qtn==11) {
@@ -177,12 +191,13 @@ public class IconPage extends AppCompatActivity {
                                                 tts.setLanguage(Locale.getDefault());
                                                 tts.setSpeechRate(1.0f);
                                                 tts.speak(r, TextToSpeech.QUEUE_ADD, null);
+
+                                                finish();
+                                                Intent intent = new Intent(IconPage.this,IconPage.class);
+                                                startActivity(intent);
                                             }
                                         }
                                     });
-                                    finish();
-                                    Intent intent = new Intent(IconPage.this,IconPage.class);
-                                    startActivity(intent);
                                 }
                             }
                         }
